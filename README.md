@@ -7,8 +7,17 @@ This is how we deploy the services composing the archive in various environments
 ##Installation
 Assuming a CentOS 7 host with docker installed.
 
-Here should follow instructions on how to setup on a fresh machine.
+Make sure the master postgres MDB instance has your IP listed for replication.
 
+Here should follow instructions on how to setup on a fresh machine.
+Probably something along the lines of:
+1. git clone / download this repo
+2. touch and edit .env
+3. `docker-compose up -d`
+4. sed & cp cron.txt into /etc/cron.d/
+5. exec post-install.sh
+
+  
 
 # Operations
 **Start the System**
@@ -25,7 +34,7 @@ docker-compose logs -f <SERVICE>
 
 Nginx access and error logs per service is saved on an attached volume. To access these files use a utility container:
 ```shell script
-docker run -it --rm --volume archive-docker-compose_nginx_data:/data busybox 
+docker run -it --rm --volume archive-docker_nginx_data:/data busybox 
 ```
 
 **Reload A Service**
@@ -33,8 +42,7 @@ docker run -it --rm --volume archive-docker-compose_nginx_data:/data busybox
 After a service code or environment has changed. 
 ```shell script
 docker-compose pull <SERVICE>
-docker-compose up -d --no-deps --build <SERVICE>
-docker-compose restart nginx 
+docker-compose up -d --no-deps --build <SERVICE> 
 ```
 TODO: find out why nginx restart is required to have the IP of the newly updated service container.
 

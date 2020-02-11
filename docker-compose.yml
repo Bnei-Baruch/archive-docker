@@ -6,8 +6,6 @@ x-logging:
     max-size: '12m'
     max-file: '5'
   driver: json-file
-x-variables:
-  &mdb_url: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
 
 services:
   nginx:
@@ -34,6 +32,7 @@ services:
     build: https://github.com/onderaycicek/postgres.git#master:9.6
     volumes:
       - pg_data:/var/lib/postgresql/data/pg_data
+      - backup:/backup
     networks:
       - backend
     command: -c 'hot_standby=on'
@@ -49,15 +48,19 @@ services:
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/backup/elastic
+      - ES_JAVA_OPTS=${ELASITC_JAVA_OPTS}
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
+      - backup:/backup
     networks:
       - backend
+    ports:
+      - 9200:9200
   archive_backend:
     build: ~/go/src/github.com/Bnei-Baruch/archive-backend
     volumes:
@@ -71,7 +74,7 @@ services:
       - postgres_mdb
       - elastic
     environment:
-      MDB_URL: *mdb_url
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server"]
   events:
@@ -87,7 +90,7 @@ services:
       - postgres_mdb
       - elastic
     environment:
-      MDB_URL: *mdb_url
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "events"]
   mdb_links:
@@ -101,7 +104,7 @@ services:
     depends_on:
       - postgres_mdb
     environment:
-      MDB_URL: *mdb_url
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
   assets_api:
@@ -115,10 +118,10 @@ services:
     depends_on:
       - postgres_mdb
     environment:
-      MDB_URL: *mdb_url
       BASE_DIR: /assets/generated
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
+      MDB_POOL_SIZE: 8
     command: ["/wait-for", "postgres_mdb:5432", "--", "uwsgi", "--show-config"]
-  #    restart: always
   kmedia_mdb:
     build: ~/projects/kmedia-mdb
     volumes:
@@ -152,4 +155,5 @@ volumes:
   assets:
   kmedia_build:
   admin_ui_build:
+  backup:
 
