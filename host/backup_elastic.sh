@@ -8,5 +8,6 @@ curl -XDELETE 'http://localhost:9200/_snapshot/backup/full'
 echo "start a new snapshot"
 curl -XPUT 'http://localhost:9200/_snapshot/backup/full' -H 'Content-Type: application/json' -d '{
       "indices": "_all",
-      "ignore_unavailable": true,"include_global_state": false
+      "ignore_unavailable": true,
+      "include_global_state": false
   }'

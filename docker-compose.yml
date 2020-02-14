@@ -43,6 +43,8 @@ services:
       PRIMARY_USER: ${MDB_PRIMARY_USER}
       PRIMARY_PASSWORD: ${MDB_PRIMARY_PASSWORD}
       PRIMARY_SLOTNAME: dockerslot
+      MDB_USER: ${MDB_USER}
+      MDB_PASSWORD: ${MDB_PASSWORD}
   elastic:
     build: ./elastic
     environment:

@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  sync:
+    build: ./sync
+    volumes:
+      - assets:/data/assets
+      - backup:/data/backup
+    ports:
+      - 8873:873
+
+volumes:
+  assets:
+    external:
+      name: archive-docker_assets
+  backup:
+    external:
+      name: archive-docker_backup
+
