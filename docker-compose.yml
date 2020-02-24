@@ -9,10 +9,9 @@ x-logging:
 
 services:
   nginx:
-    image: nginx:latest
+    build: ./nginx
+    restart: unless-stopped
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/conf.d:/etc/nginx/conf.d
       - nginx_data:/data
       - kmedia_build:/sites/archive-frontend:ro
       - admin_ui_build:/sites/admin:ro
@@ -30,6 +29,7 @@ services:
       - imaginary
   postgres_mdb:
     build: https://github.com/onderaycicek/postgres.git#master:9.6
+    restart: unless-stopped
     volumes:
       - pg_data:/var/lib/postgresql/data/pg_data
       - backup:/backup
@@ -47,15 +47,7 @@ services:
       MDB_PASSWORD: ${MDB_PASSWORD}
   elastic:
     build: ./elastic
-    environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - path.repo=/backup/elastic
-      - ES_JAVA_OPTS=${ELASITC_JAVA_OPTS}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    restart: unless-stopped
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
       - backup:/backup
@@ -63,8 +55,18 @@ services:
       - backend
     ports:
       - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - path.repo=/backup/elastic
+      - ES_JAVA_OPTS=${ELASITC_JAVA_OPTS}
   archive_backend:
     build: ~/go/src/github.com/Bnei-Baruch/archive-backend
+    restart: unless-stopped
     volumes:
       - ./archive_backend/config.toml:/app/config.toml
       - assets:/assets
@@ -81,6 +83,7 @@ services:
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server"]
   events:
     build: ~/go/src/github.com/Bnei-Baruch/archive-backend
+    restart: unless-stopped
     volumes:
       - ./archive_backend/config.toml:/app/config.toml
       - assets:/assets
@@ -97,6 +100,7 @@ services:
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "events"]
   mdb_links:
     build: ~/go/src/github.com/Bnei-Baruch/mdb-links
+    restart: unless-stopped
     volumes:
       - ./mdb-links/config.toml:/app/config.toml
     networks:
@@ -111,6 +115,7 @@ services:
     command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
   assets_api:
     build: ~/projects/archive-unzip
+    restart: unless-stopped
     volumes:
       - assets:/assets
     networks:
@@ -126,6 +131,7 @@ services:
     command: ["/wait-for", "postgres_mdb:5432", "--", "uwsgi", "--show-config"]
   kmedia_mdb:
     build: ~/projects/kmedia-mdb
+    restart: unless-stopped
     volumes:
       - kmedia_build:/app/build:ro
     networks:
@@ -139,6 +145,7 @@ services:
       - admin_ui_build:/app:ro
   imaginary:
     image: h2non/imaginary:1.1.0
+    restart: unless-stopped
     networks:
       - frontend
     logging: *default-logging

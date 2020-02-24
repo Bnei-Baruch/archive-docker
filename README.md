@@ -8,6 +8,7 @@ This is how we deploy the services composing the archive in various environments
 Assuming a CentOS 7 host with docker installed.
 
 Make sure the master postgres MDB instance has your IP listed for replication.
+Make sure nats streaming is accessible from your machine.
 
 Here should follow instructions on how to setup on a fresh machine.
 Probably something along the lines of:

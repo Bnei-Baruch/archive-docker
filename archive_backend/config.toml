@@ -11,16 +11,18 @@ url=""
 url="http://elastic:9200"
 cdn-url="https://cdn.kabbalahmedia.info"
 unzip-url="http://nginx/assets/api"
+data-folder="/data"
 sources-folder="/assets/sources"
 prepare-docs-batch-size=20
 prepare-docs-parallelism=2
-synonyms-folder="/assets/archive-backend/search/synonyms"
 
 [nats]
 url="nats://nats.il.local:4222"
-client-id="mdb-test"
+client-id="archive-backend-docker"
 cluster-id="test-cluster"
 subject="mdb"
+durable=true
+durable-name="archive-backend-events"
 
 [file_service]
 url1="http://files.kabbalahmedia.info"
