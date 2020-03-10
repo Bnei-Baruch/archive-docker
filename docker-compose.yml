@@ -65,7 +65,7 @@ services:
       - path.repo=/backup/elastic
       - ES_JAVA_OPTS=${ELASITC_JAVA_OPTS}
   archive_backend:
-    build: ~/go/src/github.com/Bnei-Baruch/archive-backend
+    image: bneibaruch/archive_backend:${ARCHIVE_BACKEND_VERSION}
     restart: unless-stopped
     volumes:
       - ./archive_backend/config.toml:/app/config.toml
@@ -82,7 +82,7 @@ services:
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server"]
   events:
-    build: ~/go/src/github.com/Bnei-Baruch/archive-backend
+    image: bneibaruch/archive_backend:${ARCHIVE_BACKEND_VERSION}
     restart: unless-stopped
     volumes:
       - ./archive_backend/config.toml:/app/config.toml
@@ -99,7 +99,7 @@ services:
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "events"]
   mdb_links:
-    build: ~/go/src/github.com/Bnei-Baruch/mdb-links
+    image: bneibaruch/mdb_links:${MDB_LINKS_VERSION}
     restart: unless-stopped
     volumes:
       - ./mdb-links/config.toml:/app/config.toml
@@ -114,7 +114,7 @@ services:
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
   assets_api:
-    build: ~/projects/archive-unzip
+    image: bneibaruch/assets_api:${ASSETS_API_VERSION} 
     restart: unless-stopped
     volumes:
       - assets:/assets
@@ -130,7 +130,7 @@ services:
       MDB_POOL_SIZE: 8
     command: ["/wait-for", "postgres_mdb:5432", "--", "uwsgi", "--show-config"]
   kmedia_mdb:
-    build: ~/projects/kmedia-mdb
+    image: bneibaruch/kmedia_mdb:${KMEDIA_MDB_VERSION}
     restart: unless-stopped
     volumes:
       - kmedia_build:/app/build:ro
@@ -140,7 +140,7 @@ services:
       - "3001-3003:3001"
     logging: *default-logging
   admin_ui:
-    build: ~/projects/mdb-admin
+    image: bneibaruch/mdb_admin:${MDB_ADMIN_VERSION}
     volumes:
       - admin_ui_build:/app:ro
   imaginary:
