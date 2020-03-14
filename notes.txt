@@ -1,10 +1,11 @@
-* imaginary can no longer point to nginx via 'localhost', we need to change the front-end to use 'nginx' instead
 * logging
 * volumes layout on host lvm
 * docker restarts ?!
-* library update process ?
+* library update process - docker cp with helper container
 * merge docker branches where needed (archive-backend, archive-unzip)
+* packer vm installation ?
 
+* copy assets from production into docker volume - logos, lessons, help and sources
 * make sure email sending is working in production ! (once postfix is setup on the host)
 * make sure backups runs in production (elastic + postgres)
 * make sure nginx logrotate is working and with correct permissions

@@ -133,7 +133,7 @@ services:
     image: bneibaruch/kmedia_mdb:${KMEDIA_MDB_VERSION}
     restart: unless-stopped
     volumes:
-      - kmedia_build:/app/build:ro
+      - kmedia_build:/build_copy
     networks:
       - frontend
     ports:
@@ -142,7 +142,7 @@ services:
   admin_ui:
     image: bneibaruch/mdb_admin:${MDB_ADMIN_VERSION}
     volumes:
-      - admin_ui_build:/app:ro
+      - admin_ui_build:/build_copy
   imaginary:
     image: h2non/imaginary:1.1.0
     restart: unless-stopped
