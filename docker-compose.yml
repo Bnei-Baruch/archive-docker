@@ -28,7 +28,7 @@ services:
       - kmedia_mdb
       - imaginary
   postgres_mdb:
-    build: https://github.com/onderaycicek/postgres.git#master:9.6
+    build: https://github.com/edoshor/postgres.git#master:9.6
     restart: unless-stopped
     volumes:
       - pg_data:/var/lib/postgresql/data/pg_data
@@ -114,7 +114,7 @@ services:
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
   assets_api:
-    image: bneibaruch/assets_api:${ASSETS_API_VERSION} 
+    image: bneibaruch/assets_api:${ASSETS_API_VERSION}
     restart: unless-stopped
     volumes:
       - assets:/assets
@@ -152,6 +152,18 @@ services:
     environment:
       PORT: 8082
     command: -cors -concurrency 20 -enable-url-source nginx,kabbalahmedia.info,*.kabbalahmedia.info
+  sync:
+    build: ./sync
+    volumes:
+      - assets:/data/assets:ro
+      - backup:/data/backup:ro
+    networks:
+      - frontend
+    ports:
+      - "22222:22"
+    logging: *default-logging
+    environment:
+      SYNC_PASSWORD: ${SYNC_PASSWORD}
 
 networks:
   frontend:
@@ -165,4 +177,3 @@ volumes:
   kmedia_build:
   admin_ui_build:
   backup:
-

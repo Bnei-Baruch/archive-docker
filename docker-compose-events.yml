@@ -1,0 +1,40 @@
+version: "3.7"
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '12m'
+    max-file: '5'
+  driver: json-file
+
+services:
+  events:
+    image: bneibaruch/archive_backend:${ARCHIVE_BACKEND_VERSION}
+    restart: unless-stopped
+    volumes:
+      - ./archive_backend/config.toml:/app/config.toml
+      - assets:/assets
+    networks:
+      - frontend
+      - backend
+    logging: *default-logging
+    depends_on:
+      - postgres_mdb
+      - elastic
+    environment:
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
+      SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
+    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "events"]
+
+networks:
+  frontend:
+    external:
+      name: archive-docker_frontend
+  backend:
+    external:
+      name: archive-docker_backend
+
+volumes:
+  assets:
+    external:
+      name: archive-docker_assets

@@ -5,13 +5,15 @@ LABEL maintainer="edoshor@gmail.com"
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-        rsync && \
+        openssh && \
     rm -rf /var/cache/apk/*
 
-COPY ./rsyncd.conf /etc/
+RUN adduser -D syncer
+
+COPY docker-entrypoint.sh /usr/local/bin
 
 VOLUME ["/data"]
 
-EXPOSE 873
+EXPOSE 22
 
-CMD ["/usr/bin/rsync", "--no-detach", "--daemon"]
+ENTRYPOINT ["docker-entrypoint.sh"]

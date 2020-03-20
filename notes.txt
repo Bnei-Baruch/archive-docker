@@ -2,8 +2,8 @@
 * volumes layout on host lvm
 * docker restarts ?!
 * library update process - docker cp with helper container
-* merge docker branches where needed (archive-backend, archive-unzip)
-* packer vm installation ?
+* merge docker branches where needed (archive-backend)
+* post-install script for suitcases and dev/staging/demo environments
 
 * copy assets from production into docker volume - logos, lessons, help and sources
 * make sure email sending is working in production ! (once postfix is setup on the host)
@@ -11,4 +11,5 @@
 * make sure nginx logrotate is working and with correct permissions
 
 * front-ends dynamic configs
+* suitcase domain DR solution - dns / subdomains / what not
 * rollbar in ssr, assets_api

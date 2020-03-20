@@ -12,13 +12,16 @@ Make sure nats streaming is accessible from your machine.
 
 Here should follow instructions on how to setup on a fresh machine.
 Probably something along the lines of:
-1. git clone / download this repo
-2. touch and edit .env
-3. `docker-compose up -d`
-4. sed & cp cron.txt into /etc/cron.d/
-5. exec post-install.sh
 
-  
+```shell script
+curl -sL https://raw.githubusercontent.com/Bnei-Baruch/archive-docker/master/host/install.sh | bash -s 
+
+cd archive-docker
+vi .env
+
+host/post-install.sh
+```
+
 
 # Operations
 **Start the System**
