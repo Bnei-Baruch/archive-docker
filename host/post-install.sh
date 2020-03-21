@@ -2,6 +2,9 @@
 set +e
 set -x
 
+# required for elastic in docker
+sysctl -w vm.max_map_count=262144
+
 # bring up services
 docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d

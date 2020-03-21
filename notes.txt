@@ -4,11 +4,13 @@
 * library update process - docker cp with helper container
 * merge docker branches where needed (archive-backend)
 * post-install script for suitcases and dev/staging/demo environments
+* dockerize mdb-fs and filer-backend
 
 * copy assets from production into docker volume - logos, lessons, help and sources
 * make sure email sending is working in production ! (once postfix is setup on the host)
 * make sure backups runs in production (elastic + postgres)
 * make sure nginx logrotate is working and with correct permissions
+* make sure suitcases can sync
 
 * front-ends dynamic configs
 * suitcase domain DR solution - dns / subdomains / what not
