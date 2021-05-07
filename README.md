@@ -4,7 +4,8 @@ This is how we deploy the services composing the archive in various environments
 
 
 
-##Installation
+## Installation
+
 Assuming a CentOS 7 host with docker installed.
 
 Make sure the master postgres MDB instance has your IP listed for replication.

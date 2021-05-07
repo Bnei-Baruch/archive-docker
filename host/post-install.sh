@@ -2,11 +2,15 @@
 set +e
 set -x
 
+# Internal hosts
+cat host/etc_hosts >> /etc/hosts
+
 # required for elastic in docker
 sysctl -w vm.max_map_count=262144
 
 # bring up services
 docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
+docker-compose up -d
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
 
 # TODO: events above is environment optional, otherwise we could just:
@@ -40,8 +44,14 @@ rm -rf assets
 # reindex elastic
 docker-compose exec archive_backend ./archive-backend index
 
-# re-run events
-docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d events
+# re-run everything
+docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
+
+# scale kmedia-mdb
+docker-compose up -d --no-build --scale kmedia_mdb=3
 
 # install cron jobs
 sed "s|<INSTALL_DIR>|$(pwd)|g" host/archive.cron.txt > /etc/cron.d/archive
+
+# CI/CD reminder
+echo "REMINDER: setup ssh access for CI/CD agents"

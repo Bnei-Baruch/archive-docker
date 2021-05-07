@@ -137,10 +137,10 @@ services:
     networks:
       - frontend
     ports:
-      - "3001-3003:3001"
+      - "3001"
     logging: *default-logging
   admin_ui:
-    image: bneibaruch/mdb_admin:${MDB_ADMIN_VERSION}
+    image: bneibaruch/mdb_admin:external-${MDB_ADMIN_VERSION}
     volumes:
       - admin_ui_build:/build_copy
   imaginary:
