@@ -17,6 +17,8 @@ services:
     networks:
       - frontend
       - backend
+    extra_hosts:
+      - nats.il.local:${HOST_NATS_IL_LOCAL}
     logging: *default-logging
     depends_on:
       - postgres_mdb

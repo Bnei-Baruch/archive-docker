@@ -63,3 +63,10 @@ docker-compose exec archive_backend ./archive-backend index
 ```
 
 
+**psql for MDB**
+
+To start a psql session with MDB read replica 
+
+```shell script
+(export $(grep MDB .env | xargs) ; docker-compose exec postgres_mdb psql  "postgres://$MDB_USER:$MDB_PASSWORD@localhost/mdb?sslmode=disable")
+```

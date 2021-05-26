@@ -18,6 +18,8 @@ services:
       - assets:/sites/assets:ro
     networks:
       - frontend
+    extra_hosts:
+      - app.mdb.bbdomain.org:$HOST_APP_MDB_BBDOMAIN_ORG
     ports:
       - 80:80
       - 443:443
@@ -81,23 +83,6 @@ services:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server"]
-  events:
-    image: bneibaruch/archive_backend:${ARCHIVE_BACKEND_VERSION}
-    restart: unless-stopped
-    volumes:
-      - ./archive_backend/config.toml:/app/config.toml
-      - assets:/assets
-    networks:
-      - frontend
-      - backend
-    logging: *default-logging
-    depends_on:
-      - postgres_mdb
-      - elastic
-    environment:
-      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
-      SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "events"]
   mdb_links:
     image: bneibaruch/mdb_links:${MDB_LINKS_VERSION}
     restart: unless-stopped

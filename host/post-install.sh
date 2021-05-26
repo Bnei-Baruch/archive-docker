@@ -2,6 +2,13 @@
 set +e
 set -x
 
+# before you start:
+# * add your instance ip to mdb postgres pg_hba.conf file with replication permission
+# * reload it in psql (no restart needed) via SELECT pg_reload_conf();
+# * While you're inside psql: create a replication slot via select pg_create_physical_replication_slot('my_replication_slot_name');
+# * add this slot name to docker-compose.yml (TODO: move to .env)
+
+
 # Internal hosts
 cat host/etc_hosts >> /etc/hosts
 
@@ -12,6 +19,8 @@ sysctl -w vm.max_map_count=262144
 docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
 docker-compose up -d
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
+
+# initial postgres replication takes time, watch with top to see that pg_basebackup is not consuming any cpu
 
 # TODO: events above is environment optional, otherwise we could just:
 # docker-compose pull && docker-compose up -d

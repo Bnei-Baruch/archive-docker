@@ -1,3 +1,4 @@
+# These should also be defined in .env
 10.100.1.224	app.archive.bbdomain.org
 10.102.3.112	app.mdb.bbdomain.org
 10.102.3.111	nats.il.local
