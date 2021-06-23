@@ -8,7 +8,6 @@ set -x
 # * While you're inside psql: create a replication slot via select pg_create_physical_replication_slot('my_replication_slot_name');
 # * add this slot name to docker-compose.yml (TODO: move to .env)
 
-
 # Internal hosts
 cat host/etc_hosts >> /etc/hosts
 
@@ -16,15 +15,11 @@ cat host/etc_hosts >> /etc/hosts
 sysctl -w vm.max_map_count=262144
 
 # bring up services
-docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
+docker-compose pull
 docker-compose up -d
-docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
 
-# initial postgres replication takes time, watch with top to see that pg_basebackup is not consuming any cpu
-
-# TODO: events above is environment optional, otherwise we could just:
-# docker-compose pull && docker-compose up -d
-
+echo "initial postgres replication takes time, watch with top to see that pg_basebackup is not consuming any cpu"
+sleep 600
 
 # Setup elastic backup
 curl -XPUT 'http://localhost:9200/_snapshot/backup' -H 'Content-Type: application/json' -d '{
@@ -52,6 +47,11 @@ rm -rf assets
 
 # reindex elastic
 docker-compose exec archive_backend ./archive-backend index
+
+# bring up events
+echo "Prefix nats.client_id and nats.durable-name with environment (if not production)"
+docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
+docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
 
 # re-run everything
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d

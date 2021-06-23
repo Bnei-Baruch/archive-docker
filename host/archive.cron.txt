@@ -4,13 +4,13 @@
 0 0 * * * root <INSTALL_DIR>/host/backup_elastic.sh
 
 # Dump postgres_mdb for suitcase sync
-0 0 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec postgres_mdb "PGPASSWORD=$MDB_PASSWORD pg_dump -U $MDB_USER -w --no-owner --create --clean --format=plain -d mdb | gzip -f9 > /backup/mdb_dump.sql.gz"
+5 0 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T postgres_mdb /bin/bash -c 'PGPASSWORD=$MDB_PASSWORD pg_dump -U $MDB_USER -w --no-owner --create --clean --format=plain -d mdb | gzip -f9 > /backup/mdb_dump.sql.gz'
 
 # Sanity check that search works properly.
-0 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec archive_backend ./search_sanity_docker.sh
+0 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./search_sanity_docker.sh
 
 # Daily eval of prod
-0 0 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec archive_backend ./eval_docker.sh
+0 0 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./eval_docker.sh
 
 # sync wordpress cms to disk
-*/10 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec archive_backend ./cms_sync_docker.sh
+*/10 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./cms_sync_docker.sh
