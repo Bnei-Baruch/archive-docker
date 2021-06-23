@@ -8,7 +8,7 @@ x-logging:
   driver: json-file
 
 services:
-  events:
+  feed_api:
     image: bneibaruch/feed_api:${FEED_API_VERSION}
     restart: unless-stopped
     volumes:
