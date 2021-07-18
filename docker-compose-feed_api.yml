@@ -8,6 +8,18 @@ x-logging:
   driver: json-file
 
 services:
+  postgres_feed:
+    image: postgres:13
+    restart: unless-stopped
+    volumes:
+      - feed_pg_data:/var/lib/postgresql/data/pg_data
+      - backup:/backup
+    networks:
+      - backend
+    environment:
+      PGDATA: /var/lib/postgresql/data/pg_data
+      POSTGRES_USER: ${FEED_USER}
+      POSTGRES_PASSWORD: ${FEED_PASSWORD}
   feed_api:
     image: bneibaruch/feed_api:${FEED_API_VERSION}
     restart: unless-stopped
@@ -24,8 +36,11 @@ services:
       - elastic
     environment:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
+      MDB_LOCAL_URL: postgres://${FEED_USER}:${FEED_PASSWORD}@postgres_feed/mdb?sslmode=disable
+      CHRONICLES_LOCAL_URL: postgres://${FEED_USER}:${FEED_PASSWORD}@postgres_feed/chronicles?sslmode=disable
+      DATA_MODELS_URL: postgres://${FEED_USER}:${FEED_PASSWORD}@postgres_feed/data_models?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./feed-api", "server"]
+    command: ["/wait-for", "postgres_mdb:5432", "--", "./feed-api", "server"]
 
 networks:
   frontend:
@@ -34,3 +49,7 @@ networks:
   backend:
     external:
       name: archive-docker_backend
+
+volumes:
+  feed_pg_data:
+

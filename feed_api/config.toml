@@ -7,9 +7,15 @@ boiler-mode=""
 
 [mdb]
 url=""
+local_url=""
 
-[elasticsearch]
-url="http://elastic:9200"
+[chronicles]
+local_url=""
+remote_api="https://chronicles.kli.one"
+
+[data_models]
+url=""
+sqls_path="./databases/data_models/flow/"
 
 [nats]
 url="nats://nats.il.local:4222"
