@@ -64,3 +64,24 @@ sed "s|<INSTALL_DIR>|$(pwd)|g" host/archive.cron.txt > /etc/cron.d/archive
 
 # CI/CD reminder
 echo "REMINDER: setup ssh access for CI/CD agents"
+
+# bring up feed-api
+echo "Prefix nats.client_id and nats.durable-name with environment (if not production)"
+docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml pull
+docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml up -d
+
+docker-compose exec -T postgres_mdb /bin/bash -c 'PGPASSWORD=$MDB_PASSWORD pg_dump -U $MDB_USER -w --no-owner --clean --format=plain -d mdb > /backup/mdb_dump_no_create.sql'
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database mdb;" '
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database chronicles;" '
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database data_models;" '
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -d mdb < /backup/mdb_dump_no_create.sql'
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -d mdb -c "create extension dblink" '
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -d chronicles -c "create extension dblink" '
+docker-compose exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -d data_models -c "create extension dblink" '
+
+# DB migrations related
+wget https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv -O /usr/local/bin/shdotenv
+chmod +x /usr/local/bin/shdotenv
+wget https://github.com/elwinar/rambler/releases/download/v5.4.0/rambler-linux-amd64 -O /usr/local/bin/rambler
+chmod +x /usr/local/bin/rambler
+exec ./migrations_feed_api.sh

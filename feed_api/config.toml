@@ -15,7 +15,7 @@ remote_api="https://chronicles.kli.one"
 
 [data_models]
 url=""
-sqls_path="./databases/data_models/flow/"
+sqls_path="./flows/data_models/"
 
 [nats]
 url="nats://nats.il.local:4222"

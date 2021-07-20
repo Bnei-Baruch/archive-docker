@@ -16,6 +16,8 @@ services:
       - backup:/backup
     networks:
       - backend
+    ports:
+      - 5433:5432
     environment:
       PGDATA: /var/lib/postgresql/data/pg_data
       POSTGRES_USER: ${FEED_USER}
@@ -40,7 +42,7 @@ services:
       CHRONICLES_LOCAL_URL: postgres://${FEED_USER}:${FEED_PASSWORD}@postgres_feed/chronicles?sslmode=disable
       DATA_MODELS_URL: postgres://${FEED_USER}:${FEED_PASSWORD}@postgres_feed/data_models?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-    command: ["/wait-for", "postgres_mdb:5432", "--", "./feed-api", "server"]
+    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "postgres_feed:5432", "--", "./feed-api", "server"]
 
 networks:
   frontend:
