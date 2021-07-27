@@ -1,5 +1,5 @@
 [server]
-bind-address=":8083"
+bind-address=":8080"
 mode="release"
 rollbar-token=""
 rollbar-environment="production"
