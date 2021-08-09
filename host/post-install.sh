@@ -47,11 +47,15 @@ rm -rf assets
 
 # reindex elastic
 docker-compose exec archive_backend ./archive-backend index
+docker-compose exec archive_backend ./archive-backend index_grammars
+docker-compose exec archive_backend ./archive-backend update_synonyms
 
 # bring up events
 echo "Prefix nats.client_id and nats.durable-name with environment (if not production)"
 docker-compose -f docker-compose.yml -f docker-compose-events.yml pull
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
+
+echo "Prefix base-url in mdb_links config.toml environment (if not production)"
 
 # re-run everything
 docker-compose -f docker-compose.yml -f docker-compose-events.yml up -d
