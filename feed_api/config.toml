@@ -4,6 +4,7 @@ mode="release"
 rollbar-token=""
 rollbar-environment="production"
 boiler-mode=""
+log-level="info"
 
 [mdb]
 url=""
