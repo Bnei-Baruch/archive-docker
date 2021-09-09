@@ -88,4 +88,6 @@ wget https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv -O /u
 chmod +x /usr/local/bin/shdotenv
 wget https://github.com/elwinar/rambler/releases/download/v5.4.0/rambler-linux-amd64 -O /usr/local/bin/rambler
 chmod +x /usr/local/bin/rambler
-exec ./migrations_feed_api.sh
+host/migrations_feed_api.sh
+
+docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml restart feed_api
