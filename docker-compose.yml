@@ -151,7 +151,7 @@ services:
     environment:
       SYNC_PASSWORD: ${SYNC_PASSWORD}
   assets_api_preview:
-    image: bneibaruch/assets_api_preview_build:${ASSETS_API_PREVIEW_VERSION}
+    image: bneibaruch/assets_api_preview:${ASSETS_API_PREVIEW_VERSION}
     volumes:
       - assets_api_preview_build:/build_copy
 
