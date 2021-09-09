@@ -16,6 +16,7 @@ services:
       - kmedia_build:/sites/archive-frontend:ro
       - admin_ui_build:/sites/admin:ro
       - assets:/sites/assets:ro
+      - assets_api_preview_build:/sites/assets-api-preview:ro
     networks:
       - frontend
     extra_hosts:
@@ -149,6 +150,10 @@ services:
     logging: *default-logging
     environment:
       SYNC_PASSWORD: ${SYNC_PASSWORD}
+  assets_api_preview:
+    image: bneibaruch/assets_api_preview_build:${ASSETS_API_PREVIEW_VERSION}
+    volumes:
+      - assets_api_preview_build:/build_copy
 
 networks:
   frontend:
@@ -161,4 +166,5 @@ volumes:
   assets:
   kmedia_build:
   admin_ui_build:
+  assets_api_preview_build:
   backup:
