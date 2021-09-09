@@ -10,7 +10,7 @@
 0 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./search_sanity_docker.sh
 
 # Daily eval of prod
-0 0 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./eval_docker.sh
+30 3 * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./eval_docker.sh
 
 # sync wordpress cms to disk
 */10 * * * * root docker-compose -f <INSTALL_DIR>/docker-compose.yml exec -T archive_backend ./cms_sync_docker.sh
