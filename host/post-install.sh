@@ -94,7 +94,6 @@ docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml restart feed
 
 
 # bring up archive-my
-echo "Prefix nats.client_id and nats.durable-name with environment (if not production)"
 docker-compose -f docker-compose.yml -f docker-compose-my.yml pull
 docker-compose -f docker-compose.yml -f docker-compose-my.yml up -d
 
