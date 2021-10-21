@@ -38,7 +38,7 @@ services:
       - backup:/backup
     networks:
       - backend
-    command: -c 'hot_standby=on'
+    command: -c 'hot_standby=on' -N 200
     environment:
       POSTGRES_PASSWORD: ${MDB_POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pg_data
