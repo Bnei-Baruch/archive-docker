@@ -6,9 +6,13 @@ set -e
 tmp_dir=$(mktemp -d -t migrations-"$(date +%Y-%m-%d-%H-%M-%S)"-XXXXXXXXXX)
 echo "$tmp_dir"
 
-docker cp archive-docker_feed_api_1:/app/migrations "$tmp_dir"
 
 eval "$(shdotenv -d docker)"
+dummy="dummy_feed_api"
+docker create --name ${dummy} bneibaruch/feed_api:${FEED_API_VERSION}
+docker cp ${dummy}:/app/migrations "$tmp_dir"
+ls -laR $tmp_dir
+
 
 docker run --rm -v "$tmp_dir/migrations/chronicles":/migrations --network archive-docker_backend migrate/migrate -path=/migrations/ -database postgres://$FEED_USER:$FEED_PASSWORD@postgres_feed/chronicles?sslmode=disable up
 docker run --rm -v "$tmp_dir/migrations/data_models":/migrations --network archive-docker_backend migrate/migrate -path=/migrations/ -database postgres://$FEED_USER:$FEED_PASSWORD@postgres_feed/data_models?sslmode=disable up
@@ -24,4 +28,5 @@ export RAMBLER_PASSWORD=$FEED_PASSWORD
 rambler apply -a
 
 
+docker rm -f ${dummy}
 rm -rf "$tmp_dir"

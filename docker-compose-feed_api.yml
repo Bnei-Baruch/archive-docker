@@ -35,6 +35,7 @@ services:
     logging: *default-logging
     depends_on:
       - postgres_mdb
+      - postgres_feed
       - elastic
     environment:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable

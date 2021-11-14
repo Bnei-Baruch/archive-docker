@@ -1,0 +1,53 @@
+version: "3.7"
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '12m'
+    max-file: '5'
+  driver: json-file
+
+services:
+  postgres_my:
+    image: postgres:13
+    restart: unless-stopped
+    volumes:
+      - mydb_pg_data:/var/lib/postgresql/data/pg_data
+      - backup:/backup
+    networks:
+      - backend
+    ports:
+      - 5434:5432
+    environment:
+      PGDATA: /var/lib/postgresql/data/pg_data
+      POSTGRES_USER: ${MY_USER}
+      POSTGRES_PASSWORD: ${MY_PASSWORD}
+  archive_my:
+    image: bneibaruch/archive_my:${ARCHIVE_MY_VERSION}
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+    logging: *default-logging
+    depends_on:
+      - postgres_mdb
+      - postgres_my
+    environment:
+      MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
+      MYDB_URL: postgres://${MY_USER}:${MY_PASSWORD}@postgres_my/mydb?sslmode=disable
+      GIN_MODE: release
+      CHRONICLES_URL: https://chronicles.kli.one/scan
+      SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
+    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "postgres_my:5432", "--", "./archive-my", "server"]
+
+networks:
+  frontend:
+    external:
+      name: archive-docker_frontend
+  backend:
+    external:
+      name: archive-docker_backend
+
+volumes:
+  mydb_pg_data:
+

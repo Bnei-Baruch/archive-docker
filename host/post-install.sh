@@ -92,3 +92,15 @@ chmod +x /usr/local/bin/rambler
 host/migrations_feed_api.sh
 
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml restart feed_api
+
+
+# bring up archive-my
+docker-compose -f docker-compose.yml -f docker-compose-my.yml pull
+docker-compose -f docker-compose.yml -f docker-compose-my.yml up -d
+
+docker-compose exec -T postgres_my /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database mydb;" '
+
+# DB migrations related
+host/migrations_archive_my.sh
+
+docker-compose -f docker-compose.yml -f docker-compose-my.yml restart archive_my
