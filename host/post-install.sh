@@ -46,6 +46,7 @@ rm -rf assets
 
 
 # reindex elastic
+mkdir -p logs/es
 docker-compose exec archive_backend ./archive-backend index
 docker-compose exec archive_backend ./archive-backend index_grammars
 docker-compose exec archive_backend ./archive-backend update_synonyms
