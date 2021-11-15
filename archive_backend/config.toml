@@ -16,6 +16,7 @@ sources-folder="/assets/sources"
 prepare-docs-batch-size=20
 prepare-docs-parallelism=2
 timeout-for-highlight="4s"
+check-typo=true
 
 [nats]
 url="nats://nats.il.local:4222"
