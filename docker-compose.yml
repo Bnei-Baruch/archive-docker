@@ -140,13 +140,14 @@ services:
     command: -cors -concurrency 20 -enable-url-source nginx,kabbalahmedia.info,*.kabbalahmedia.info
   sync:
     build: ./sync
+    restart: unless-stopped
     volumes:
       - assets:/data/assets:ro
       - backup:/data/backup:ro
-    networks:
-      - frontend
+      - ./sync/authorized_keys:/home/syncer/.ssh/authorized_keys
+    network_mode: "host"
     ports:
-      - "22222:22"
+      - "2222:2222"
     logging: *default-logging
     environment:
       SYNC_PASSWORD: ${SYNC_PASSWORD}

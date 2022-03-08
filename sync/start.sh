@@ -4,4 +4,6 @@ ssh-keygen -A
 
 echo "syncer:$SYNC_PASSWORD" | chpasswd
 
-exec /usr/sbin/sshd -D -e "$@"
+test -d ~/.ssh || mkdir ~/.ssh
+
+/usr/sbin/sshd -D -p 2222 -e "$@"

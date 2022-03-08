@@ -10,10 +10,9 @@ RUN apk update && \
 
 RUN adduser -D syncer
 
-COPY docker-entrypoint.sh /usr/local/bin
-
 VOLUME ["/data"]
 
-EXPOSE 22
+EXPOSE 2222
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ADD start.sh /start.sh
+CMD /start.sh
