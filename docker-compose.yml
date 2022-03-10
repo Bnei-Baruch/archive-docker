@@ -144,7 +144,7 @@ services:
     volumes:
       - assets:/data/assets:ro
       - backup:/data/backup:ro
-      - sync_ssh_host_keys:/keys
+      - ./sync/host_keys:/keys:ro
       - ./sync/authorized_keys:/home/syncer/.ssh/authorized_keys:ro
     network_mode: "host"
     ports:
@@ -170,4 +170,4 @@ volumes:
   admin_ui_build:
   assets_api_preview_build:
   backup:
-  sync_ssh_host_keys:
+

@@ -5,7 +5,7 @@ LABEL maintainer="edoshor@gmail.com"
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-        openssh \
+        openssh-server \
         rsync && \
     rm -rf /var/cache/apk/*
 
