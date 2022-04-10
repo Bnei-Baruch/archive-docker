@@ -87,8 +87,6 @@ services:
   mdb_links:
     image: bneibaruch/mdb_links:${MDB_LINKS_VERSION}
     restart: unless-stopped
-    volumes:
-      - ./mdb-links/config.toml:/app/config.toml
     networks:
       - frontend
       - backend
@@ -96,8 +94,11 @@ services:
     depends_on:
       - postgres_mdb
     environment:
+      GIN_MODE: release
+      BASE_URL: https://cdn.kabbalahmedia.info/
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
-      SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
+      ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
+      ROLLBAR_ENVIRONMENT: production
     command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
   assets_api:
     image: bneibaruch/assets_api:${ASSETS_API_VERSION}

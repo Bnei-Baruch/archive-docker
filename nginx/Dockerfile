@@ -4,7 +4,7 @@ LABEL maintainer="edoshor@gmail.com"
 
 RUN apt-get update && \
   apt-get install -y cron logrotate && \
-  apt-get clean && \ 
+  apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
 COPY nginx.conf /etc/nginx/nginx.conf
