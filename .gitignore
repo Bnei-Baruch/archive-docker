@@ -3,3 +3,4 @@
 assets/
 sync/host_keys/*key*
 sync/authorized_keys
+nginx/.htpasswd
