@@ -17,6 +17,8 @@ services:
       - admin_ui_build:/sites/admin:ro
       - assets:/sites/assets:ro
       - assets_api_preview_build:/sites/assets-api-preview:ro
+      - backup:/sites/backup:ro
+      - ./nginx/.htpasswd:/.htpasswd:ro
     networks:
       - frontend
     extra_hosts:
