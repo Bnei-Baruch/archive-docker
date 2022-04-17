@@ -26,6 +26,10 @@ ssh-keygen -q -N "" -t rsa -b 4096 -f sync/host_keys/ssh_host_rsa_key
 ssh-keygen -q -N "" -t ecdsa -f sync/host_keys/ssh_host_ecdsa_key
 ssh-keygen -q -N "" -t ed25519 -f sync/host_keys/ssh_host_ed25519_key
 
+# create .htpasswd for serving backup over http
+grep SYNC_PASSWORD .env # copy paste this into next interactive command
+htpasswd -c nginx/.htpasswd sync
+
 # Setup elastic backup
 curl -XPUT 'http://localhost:9200/_snapshot/backup' -H 'Content-Type: application/json' -d '{
     "type": "fs",
