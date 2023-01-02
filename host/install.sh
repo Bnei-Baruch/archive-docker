@@ -4,6 +4,9 @@ set -x
 
 yum update -y
 
+# repo for git 2.x
+yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+
 # Install Docker CE
 yum install -y \
   yum-utils \
