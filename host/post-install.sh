@@ -39,6 +39,8 @@ htpasswd -c nginx/.htpasswd sync
 # rm -rf assets
 
 # prefix environment in configs on environment other than production
+# .env -> KMEDIA_MDB_VERSION = <env>
+# .env -> MDB_ADMIN_VERSION = <env>
 # docker-compose.yml -> mdb_links.BASE_URL = https://<env>-cdn.kabbalahmedia.info/
 # archive_backend/config.toml -> nats.client-id = "<env>-archive-backend-docker"
 # archive_backend/config.toml -> nats.durable-name = "<env>-archive-backend-events"
