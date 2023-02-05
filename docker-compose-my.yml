@@ -38,6 +38,13 @@ services:
       GIN_MODE: release
       CHRONICLES_URL: https://chronicles.kli.one/scan
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
+      CHRONICLES_NAMESPACES: kmedia-app-11
+      ACCOUNTS_URL: https://accounts.kab.info/auth/realms/main
+      NEW_USER_KC_ROLE: new_user
+      KMEDIA_KC_ROLE: kmedia_user
+      KC_ADD_GROUP_URL: https://acc.kab.sh/api/kmedia?key=${MY_KC_API_KEY}
+
+
     command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "postgres_my:5432", "--", "./archive-my", "server"]
 
 networks:
