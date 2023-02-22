@@ -38,7 +38,7 @@ services:
       GIN_MODE: release
       CHRONICLES_URL: https://chronicles.kli.one/scan
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-      CHRONICLES_NAMESPACES: kmedia-app-11
+      CHRONICLES_NAMESPACES: kmedia-app-11,archive
       ACCOUNTS_URL: https://accounts.kab.info/auth/realms/main
       NEW_USER_KC_ROLE: new_user
       KMEDIA_KC_ROLE: kmedia_user
