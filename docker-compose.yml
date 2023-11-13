@@ -33,11 +33,12 @@ services:
       - kmedia_mdb
       - imaginary
   postgres_mdb:
-    build: https://github.com/edoshor/postgres.git#master:9.6
+    image: bneibaruch/postgres:14-latest
     restart: unless-stopped
     volumes:
       - pg_data:/var/lib/postgresql/data/pg_data
       - backup:/backup
+    shm_size: '512MB'
     networks:
       - backend
     command: -c 'hot_standby=on' -N 200
@@ -47,7 +48,7 @@ services:
       PRIMARY_HOST: ${MDB_PRIMARY_HOST}
       PRIMARY_USER: ${MDB_PRIMARY_USER}
       PRIMARY_PASSWORD: ${MDB_PRIMARY_PASSWORD}
-      PRIMARY_SLOTNAME: dockerslot
+      PRIMARY_SLOTNAME: ${MDB_PRIMARY_SLOTNAME}
       MDB_USER: ${MDB_USER}
       MDB_PASSWORD: ${MDB_PASSWORD}
   elastic:

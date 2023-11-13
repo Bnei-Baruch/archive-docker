@@ -22,7 +22,7 @@ check-typo=true
 url="nats://nats.il.local:4222"
 client-id="archive-backend-docker"
 cluster-id="test-cluster"
-subject="mdb"
+subject="mdb2"
 durable=true
 durable-name="archive-backend-events"
 

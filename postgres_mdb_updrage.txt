@@ -1,0 +1,59 @@
+Prerequisites:
+* All code in all places should be compatible with new version of postgres
+
+
+High level procedure to upgrade a postgres master DB
+---
+1. Prepare a new vm / container with new master db (ensure same locale and timezone)
+2. Ensure connectivity from all replicas
+3. Import data and roles from current db. Roles requires setting the same passwords manually in new db
+4. Copy pg_hba carefully and reload pg_hba
+5. Create streaming replication slots on new master db
+6. Create new slave db for each current slave
+7. New slaves should replicate from new master (compare recovery.conf after pg_basebackup is done. check pg_log for errors)
+8. Test that apps and services works with new replicas
+9. Downtime.
+    9.1 Stop writers to current db
+    9.2 Copy all data from current db to new db
+    9.2 Switch writers to new DB (new nats topic)
+    9.4 Switch readers to new DB (adjust for new nats topic)
+10. Test for regressions
+
+
+projects and environments depending on mdb
+---
+app.mdb
+dev.mdb
+
+staging-archive
+production-archive
+  * archive_backend
+  * mdb_links
+  * events
+  * assets_api
+  * cron jobs
+  * feed_api
+  * archive_my
+
+suitcase-rav
+suitcase-fr
+suitcase-ru
+
+backup (z1)
+
+
+Technical notes
+---
+<current server>$ pg_dump --create --clean mdb | gzip > mdb_create.sql.gz
+scp <current server>:/backup/pgsql/mdb_create.sql.gz .
+scp mdb_create.sql.gz <new server>:/backup/pgsql
+<new server>$ dropdb mdb
+<new server>$ gunzip < mdb_create.sql.gz | psql
+
+same above goes for mdb_dev_2 (dev db)
+
+
+note: read replicas can be replaced with almost no downtime
+1. create a new service (docker-compose) with a fresh volume replicating from new master
+2. once pg_basebackup is done stop that service
+3. up -d main service (postgres_mdb) with new image and data directory pointing to new volume
