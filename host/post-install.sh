@@ -60,7 +60,7 @@ docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml pull
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml up -d
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml stop feed_api
 
-docker-compose exec -T postgres_mdb /bin/bash -c 'PGPASSWORD=$MDB_PASSWORD pg_dump -U $MDB_USER -w --no-owner --clean --format=plain -d mdb > /backup/mdb_dump_no_create.sql'
+docker-compose exec -T postgres_mdb /bin/bash -c 'PGPASSWORD=$MDB_PASSWORD pg_dump -h localhost -U $MDB_USER -w --no-owner --clean --format=plain -d mdb > /backup/mdb_dump_no_create.sql'
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database mdb;" '
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database chronicles;" '
 docker-compose -f docker-compose.yml -f docker-compose-feed_api.yml exec -T postgres_feed /bin/bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -w -c "create database data_models;" '
