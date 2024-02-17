@@ -1,0 +1,66 @@
+version: "3.7"
+
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+  grafana_agent:
+    image: grafana/agent:latest
+    restart: unless-stopped
+    #    networks:
+    #      - frontend
+    #      - backend
+    command: run --server.http.listen-addr=0.0.0.0:12345 /etc/agent/config.river
+    ports:
+      - "12345:12345"
+    volumes:
+      - ./monitoring/config.river:/etc/agent/config.river:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nginx_data:/nginx_data:ro
+    environment:
+      AGENT_MODE: flow
+  nginx_exporter:
+    image: nginx/nginx-prometheus-exporter:1.1.0
+    restart: unless-stopped
+    networks:
+      - frontend
+    #      - backend
+    command: --nginx.scrape-uri=http://nginx:8080/stub_status
+    ports:
+      - "9113:9113"
+  postgres_mdb_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    restart: unless-stopped
+    networks:
+      #      - frontend
+      - backend
+    ports:
+      - "9187:9187"
+    volumes:
+      - ./monitoring/postgres_exporter.yml:/postgres_exporter.yml:ro
+    command: --config.file /postgres_exporter.yml
+#    environment:
+#      DATA_SOURCE_URI: postgres_mdb:5432/postgres?sslmode=disable
+#      DATA_SOURCE_USER: ${POSTGRES_EXPORTER_USER}
+#      DATA_SOURCE_PASS: ${POSTGRES_EXPORTER_PASSWORD}
+
+networks:
+  frontend:
+    external:
+      name: archive-docker_frontend
+  backend:
+    external:
+      name: archive-docker_backend
+
+volumes:
+  nginx_data:
+    external:
+      name: archive-docker_nginx_data

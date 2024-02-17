@@ -22,6 +22,6 @@ sqls_path="./flows/data_models/"
 url="nats://nats.il.local:4222"
 client-id="feed-api"
 cluster-id="test-cluster"
-subject="mdb"
+subject="mdb2"
 durable=true
 durable-name="feed-api-events"

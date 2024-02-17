@@ -9,15 +9,15 @@ LOG_FILE="$BASE_DIR/logs/es/reindex_$TIMESTAMP.log"
 
 cd ${BASE_DIR}
 
-docker-compose -f docker-compose.yml -f docker-compose-events.yml stop events
+docker compose -f docker-compose.yml -f docker-compose-events.yml stop events
 
-docker-compose exec archive_backend ./archive-backend index >> ${LOG_FILE} 2>&1
-docker-compose exec archive_backend ./archive-backend index_grammars >> ${LOG_FILE} 2>&1
-docker-compose exec archive_backend ./archive-backend update_synonyms >> ${LOG_FILE} 2>&1
+docker compose exec archive_backend ./archive-backend index >> ${LOG_FILE} 2>&1
+docker compose exec archive_backend ./archive-backend index_grammars >> ${LOG_FILE} 2>&1
+docker compose exec archive_backend ./archive-backend update_synonyms >> ${LOG_FILE} 2>&1
 
 curl -X POST "localhost:9200/_refresh"
 
-docker-compose -f docker-compose.yml -f docker-compose-events.yml start events
+docker compose -f docker-compose.yml -f docker-compose-events.yml start events
 
 
 WARNINGS="$(egrep -c "level=(warning|error)" ${LOG_FILE})"

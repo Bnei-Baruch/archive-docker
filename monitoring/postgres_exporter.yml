@@ -1,0 +1,9 @@
+auth_modules:
+  postgres_mdb_exporter:
+    type: userpass
+    userpass:
+      username: <...>
+      password: <...>
+    options:
+      # options become key=value parameters of the DSN
+      sslmode: disable

@@ -6,6 +6,10 @@ rollbar-environment="production"
 
 [mdb]
 url=""
+max-idle-conns=2
+max-open-conns=50
+conn-max-idle-time="10m"
+conn-max-lifetime="1h"
 
 [elasticsearch]
 url="http://elastic:9200"

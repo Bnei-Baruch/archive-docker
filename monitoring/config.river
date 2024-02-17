@@ -1,0 +1,58 @@
+logging {
+  level  = "error"
+  format = "json"
+}
+
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.main.output
+  labels     = { type = "docker" }
+  relabel_rules = discovery.relabel.main.rules
+  forward_to = [loki.write.bbloki.receiver]
+}
+
+discovery.relabel "main" {
+  rule {
+    source_labels =  ["__meta_docker_container_name"]
+    regex = "/(.*)"
+    target_label = "container"
+  }
+
+  rule {
+    source_labels =  ["__meta_docker_network_ip"]
+    target_label = "ip"
+  }
+
+  rule {
+    source_labels =  ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label = "compose_service"
+  }
+   targets = discovery.docker.linux.targets
+}
+
+local.file_match "logs" {
+    path_targets = [
+       {__path__ = "/nginx_data/access-*-json.log", "color" = "green"},
+       {__path__ = "/nginx_data/error*.log", "color" = "red"},
+  ]
+}
+
+loki.source.file "archive" {
+    targets    = local.file_match.logs.targets
+    forward_to = [loki.write.bbloki.receiver]
+}
+
+
+loki.write "bbloki" {
+  endpoint {
+    url = "https://loki.kab.sh:443/loki/api/v1/push"
+    basic_auth {
+      username = "..."
+      password = "..."
+    }
+  }
+}
