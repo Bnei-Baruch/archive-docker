@@ -15,9 +15,6 @@ services:
   grafana_agent:
     image: grafana/agent:latest
     restart: unless-stopped
-    #    networks:
-    #      - frontend
-    #      - backend
     command: run --server.http.listen-addr=0.0.0.0:12345 /etc/agent/config.river
     ports:
       - "12345:12345"
@@ -32,7 +29,6 @@ services:
     restart: unless-stopped
     networks:
       - frontend
-    #      - backend
     command: --nginx.scrape-uri=http://nginx:8080/stub_status
     ports:
       - "9113:9113"
@@ -40,17 +36,12 @@ services:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
     restart: unless-stopped
     networks:
-      #      - frontend
       - backend
     ports:
       - "9187:9187"
     volumes:
       - ./monitoring/postgres_exporter.yml:/postgres_exporter.yml:ro
     command: --config.file /postgres_exporter.yml
-#    environment:
-#      DATA_SOURCE_URI: postgres_mdb:5432/postgres?sslmode=disable
-#      DATA_SOURCE_USER: ${POSTGRES_EXPORTER_USER}
-#      DATA_SOURCE_PASS: ${POSTGRES_EXPORTER_PASSWORD}
 
 networks:
   frontend:
