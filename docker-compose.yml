@@ -39,9 +39,13 @@ services:
       - pg_data:/var/lib/postgresql/data/pg_data
       - backup:/backup
     shm_size: '512MB'
+    deploy:
+      resources:
+        limits:
+          cpus: "6.0"
     networks:
       - backend
-    command: -c 'hot_standby=on' -N 200
+    command: -c 'hot_standby=on' -c 'log_min_duration_statement 1000ms' -c 'log_temp_files 0' -N 200
     environment:
       POSTGRES_PASSWORD: ${MDB_POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pg_data
@@ -86,7 +90,7 @@ services:
     environment:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-    command: ["/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server"]
+    command: [ "/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server" ]
   mdb_links:
     image: bneibaruch/mdb_links:${MDB_LINKS_VERSION}
     restart: unless-stopped
@@ -102,7 +106,8 @@ services:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
       ROLLBAR_ENVIRONMENT: production
-    command: ["/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server"]
+      MDB_MAX_OPEN_CONNS: 10
+    command: [ "/wait-for", "postgres_mdb:5432", "--", "./mdb-links", "server" ]
   assets_api:
     image: bneibaruch/assets_api:${ASSETS_API_VERSION}
     restart: unless-stopped
@@ -118,7 +123,7 @@ services:
       BASE_DIR: /assets/generated
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       MDB_POOL_SIZE: 8
-    command: ["/wait-for", "postgres_mdb:5432", "--", "uwsgi", "--show-config"]
+    command: [ "/wait-for", "postgres_mdb:5432", "--", "uwsgi", "--show-config" ]
   kmedia_mdb:
     image: bneibaruch/kmedia_mdb:${KMEDIA_MDB_VERSION}
     restart: unless-stopped
