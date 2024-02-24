@@ -42,6 +42,15 @@ services:
     volumes:
       - ./monitoring/postgres_exporter.yml:/postgres_exporter.yml:ro
     command: --config.file /postgres_exporter.yml
+  elasticsearch_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    command:
+      - '--es.uri=http://elastic:9200'
+    restart: unless-stopped
+    ports:
+      - "9114:9114"
+    networks:
+      - backend
 
 networks:
   frontend:
