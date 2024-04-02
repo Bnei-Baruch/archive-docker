@@ -45,7 +45,7 @@ services:
           cpus: "6.0"
     networks:
       - backend
-    command: -c 'hot_standby=on' -c 'log_min_duration_statement=1000ms' -c 'log_temp_files=0' -c "shared_buffers=2GB" -c "work_mem=32MB" -c "maintenance_work_mem=128MB" -N 100
+    command: -c 'hot_standby=on' -c 'log_min_duration_statement=1000ms' -c 'log_temp_files=0' -c "shared_buffers=2GB" -c "work_mem=32MB" -c "maintenance_work_mem=128MB" -c "shared_preload_libraries=pg_stat_statements" -c "pg_stat_statements.track=all" -N 100
     environment:
       POSTGRES_PASSWORD: ${MDB_POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pg_data

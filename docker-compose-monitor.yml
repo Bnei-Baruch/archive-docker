@@ -32,7 +32,7 @@ services:
     command: --nginx.scrape-uri=http://nginx:8080/stub_status
     ports:
       - "9113:9113"
-  postgres_mdb_exporter:
+  postgres_exporter:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
     restart: unless-stopped
     networks:
@@ -41,7 +41,7 @@ services:
       - "9187:9187"
     volumes:
       - ./monitoring/postgres_exporter.yml:/postgres_exporter.yml:ro
-    command: --config.file /postgres_exporter.yml
+    command: --collector.stat_statements --collector.database_wraparound --collector.long_running_transactions --config.file /postgres_exporter.yml
   elasticsearch_exporter:
     image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
     command:

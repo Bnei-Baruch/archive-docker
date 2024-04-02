@@ -22,6 +22,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pg_data
       POSTGRES_USER: ${MY_USER}
       POSTGRES_PASSWORD: ${MY_PASSWORD}
+    command: postgres -c "shared_preload_libraries=pg_stat_statements" -c "pg_stat_statements.track=all"
   archive_my:
     image: bneibaruch/archive_my:${ARCHIVE_MY_VERSION}
     restart: unless-stopped
