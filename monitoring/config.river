@@ -31,19 +31,40 @@ discovery.relabel "main" {
     source_labels =  ["__meta_docker_container_label_com_docker_compose_service"]
     target_label = "compose_service"
   }
+
+  rule {
+    target_label = "namespace"
+    replacement  = "kmedia"
+  }
+
+  rule {
+    target_label = "environment"
+    replacement  = "production"
+  }
+
    targets = discovery.docker.linux.targets
 }
 
 local.file_match "logs" {
     path_targets = [
-       {__path__ = "/nginx_data/access-*-json.log", "color" = "green"},
-       {__path__ = "/nginx_data/error*.log", "color" = "red"},
+      {__path__ = "/nginx_data/access-*-json.log", "color" = "green"},
+      {__path__ = "/nginx_data/error*.log", "color" = "red"},
   ]
 }
 
 loki.source.file "archive" {
-    targets    = local.file_match.logs.targets
-    forward_to = [loki.write.bbloki.receiver]
+  targets    = local.file_match.logs.targets
+  
+  rule {
+    target_label = "namespace"
+    replacement  = "kmedia"
+  }
+  rule {
+    target_label = "environment"
+    replacement  = "production"
+  }
+
+  forward_to = [loki.write.bbloki.receiver]
 }
 
 
