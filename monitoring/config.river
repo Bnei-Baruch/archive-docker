@@ -12,7 +12,7 @@ loki.source.docker "default" {
   targets    = discovery.relabel.main.output
   labels     = { type = "docker" }
   relabel_rules = discovery.relabel.main.rules
-  forward_to = [loki.write.bbloki.receiver]
+  forward_to = [loki.relabel.add_static_labels.receiver]
 }
 
 discovery.relabel "main" {
@@ -32,45 +32,38 @@ discovery.relabel "main" {
     target_label = "compose_service"
   }
 
-  rule {
-    target_label = "namespace"
-    replacement  = "kmedia"
-  }
-
-  rule {
-    target_label = "environment"
-    replacement  = "production"
-  }
-
    targets = discovery.docker.linux.targets
 }
 
 local.file_match "logs" {
     path_targets = [
-      {__path__ = "/nginx_data/access-*-json.log", "color" = "green"},
-      {__path__ = "/nginx_data/error*.log", "color" = "red"},
+      {__path__ = "/nginx_data/access-*-json.log", source = "nginx", type = "access"},
+      {__path__ = "/nginx_data/error*.log", source = "nginx", type = "error"},
   ]
 }
 
-loki.source.file "archive" {
+loki.source.file "nginx" {
   targets    = local.file_match.logs.targets
-  
-  rule {
-    target_label = "namespace"
-    replacement  = "kmedia"
-  }
-  rule {
-    target_label = "environment"
-    replacement  = "production"
-  }
-
-  forward_to = [loki.write.bbloki.receiver]
+  forward_to = [loki.relabel.add_static_labels.receiver]
 }
 
+loki.relabel "add_static_labels" {
+    forward_to = [loki.write.bbloki.receiver]
+
+    rule {
+      target_label = "namespace"
+      replacement  = "kmedia"
+    }
+
+    rule {
+      target_label = "environment"
+      replacement  = "production"
+    }
+}
 
 loki.write "bbloki" {
   endpoint {
-    url = "https://loki.kab.sh:443/loki/api/v1/push"
+    url = "..."
     basic_auth {
       username = "..."
       password = "..."
