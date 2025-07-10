@@ -1,0 +1,30 @@
+name: Elasticsearch docker image
+
+on:
+  workflow_dispatch:
+    
+jobs:
+  
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.BBDEPLOYMENT_DOCKERHUB_USERNAME }}
+          password: ${{ secrets.BBDEPLOYMENT_DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: elastic
+          push: true
+          tags: |
+            bneibaruch/archive_search:elastic
+            bneibaruch/archive_search:elastic-gh_${{github.run_number}}
+          build-args: |
+            build_number=gh_${{github.run_number}}
