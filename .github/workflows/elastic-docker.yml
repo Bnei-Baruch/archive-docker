@@ -26,5 +26,3 @@ jobs:
           tags: |
             bneibaruch/archive_search:elastic
             bneibaruch/archive_search:elastic-gh_${{github.run_number}}
-          build-args: |
-            build_number=gh_${{github.run_number}}
