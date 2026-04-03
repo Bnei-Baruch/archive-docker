@@ -22,6 +22,9 @@ prepare-docs-parallelism=2
 timeout-for-highlight="4s"
 check-typo=true
 
+[elasticsearch9]
+url="http://es9:9200"
+
 [nats]
 url="nats://nats.il.local:4222"
 client-id="archive-backend-docker"

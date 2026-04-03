@@ -14,8 +14,10 @@ docker compose -f docker-compose.yml -f docker-compose-events.yml stop events
 docker compose exec archive_backend ./archive-backend index >> ${LOG_FILE} 2>&1
 docker compose exec archive_backend ./archive-backend index_grammars >> ${LOG_FILE} 2>&1
 docker compose exec archive_backend ./archive-backend update_synonyms >> ${LOG_FILE} 2>&1
+docker compose exec archive_backend ./archive-backend es9index >> ${LOG_FILE} 2>&1
 
 curl -X POST "localhost:9200/_refresh"
+curl -X POST "localhost:9201/_refresh"
 
 docker compose -f docker-compose.yml -f docker-compose-events.yml start events
 

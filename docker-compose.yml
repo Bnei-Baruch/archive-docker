@@ -74,6 +74,26 @@ services:
       - bootstrap.memory_lock=true
       - path.repo=/backup/elastic
       - ES_JAVA_OPTS=${ELASITC_JAVA_OPTS}
+  es9:
+    build: ./es9
+    restart: unless-stopped
+    volumes:
+      - es9_data:/usr/share/elasticsearch/data
+      - backup:/backup
+    networks:
+      - backend
+    ports:
+      - 9201:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - path.repo=/backup/es9
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=${ES9_JAVA_OPTS}
   archive_backend:
     image: bneibaruch/archive_backend:${ARCHIVE_BACKEND_VERSION}
     restart: unless-stopped
@@ -87,10 +107,11 @@ services:
     depends_on:
       - postgres_mdb
       - elastic
+      - es9
     environment:
       MDB_URL: postgres://${MDB_USER}:${MDB_PASSWORD}@postgres_mdb/mdb?sslmode=disable
       SERVER_ROLLBAR_TOKEN: ${ROLLBAR_TOKEN}
-    command: [ "/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--timeout=60", "--", "./archive-backend", "server" ]
+    command: [ "/wait-for", "postgres_mdb:5432", "--", "/wait-for", "elastic:9200", "--", "/wait-for", "es9:9200", "--timeout=60", "--", "./archive-backend", "server" ]
   mdb_links:
     image: bneibaruch/mdb_links:${MDB_LINKS_VERSION}
     restart: unless-stopped
@@ -174,6 +195,7 @@ volumes:
   nginx_data:
   pg_data:
   elastic_data:
+  es9_data:
   assets:
   kmedia_build:
   admin_ui_build:

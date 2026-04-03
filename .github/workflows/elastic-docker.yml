@@ -4,7 +4,29 @@ on:
   workflow_dispatch:
     
 jobs:
-  
+
+  build-es9:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.BBDEPLOYMENT_DOCKERHUB_USERNAME }}
+          password: ${{ secrets.BBDEPLOYMENT_DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: es9
+          push: true
+          tags: |
+            bneibaruch/archive_search:es9
+            bneibaruch/archive_search:es9-gh_${{github.run_number}}
+
   build:
     runs-on: ubuntu-latest
     

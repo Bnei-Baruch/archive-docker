@@ -95,6 +95,15 @@ curl -XPUT 'http://localhost:9200/_snapshot/backup' -H 'Content-Type: applicatio
     }
 }'
 
+# Setup es9 backup
+curl -XPUT 'http://localhost:9201/_snapshot/backup' -H 'Content-Type: application/json' -d '{
+    "type": "fs",
+    "settings": {
+        "location": "/backup/es9",
+        "compress": true
+    }
+}'
+
 # reindex elastic
 # don't "reindex.sh", watch the logs and avoid sending error emails
 mkdir -p logs/es
