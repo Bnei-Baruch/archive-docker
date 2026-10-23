@@ -11,3 +11,13 @@ curl -XPUT 'http://localhost:9200/_snapshot/backup/full' -H 'Content-Type: appli
       "ignore_unavailable": true,
       "include_global_state": false
   }'
+
+echo "delete previous es9 snapshot"
+curl -XDELETE 'http://localhost:9201/_snapshot/backup/full'
+
+echo "start a new es9 snapshot"
+curl -XPUT 'http://localhost:9201/_snapshot/backup/full' -H 'Content-Type: application/json' -d '{
+      "indices": "*",
+      "ignore_unavailable": true,
+      "include_global_state": false
+  }'
